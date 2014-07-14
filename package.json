@@ -1,0 +1,24 @@
+{
+  "name": "ghostselfie",
+  "version": "0.0.0",
+  "description": "ghostselfie",
+  "main": "index.js",
+  "dependencies": {
+    "twit": "^1.1.15",
+    "request": "^2.37.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ghostselfie"
+  },
+  "keywords": [
+    "ghost",
+    "selfie"
+  ],
+  "author": "arjun prakash",
+  "license": "ISC"
+}

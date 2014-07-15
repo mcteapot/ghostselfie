@@ -1,0 +1,45 @@
+<html>
+	<head>
+		<title>ghostselfie</title>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			jQuery(function($){
+				var socket = io();
+				$('#get-user').submit(function(e){
+					e.preventDefault();
+					console.log("subit get user");
+					socket.emit('get user', 'get user yo');
+				});
+				
+				$('#send-filename').submit(function(e){
+					e.preventDefault();
+					console.log("sending file name img.png");
+					socket.emit('file ready', 'imp.png');
+				});
+
+				socket.on('sending user', function(msg){
+					console.log("getting user");
+	    			$('#user-list').append(msg + "<br/>");
+	  			});
+
+
+			});
+		</script>
+	</head>
+	<body>
+	<form id="get-user">
+		<input type="submit" value="Get User"></input>
+		
+	</form>
+	<form id="send-filename">
+		<input type="submit" value="Send File img.png"></input>
+		
+	</form>
+	<div id="user-list">
+		
+	</div>
+
+	</body>
+
+</html>

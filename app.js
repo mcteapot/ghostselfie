@@ -7,19 +7,31 @@ var fs = require('fs')
 	, twit = require('twit')
 	, request = require('request');
 
+var username = null;
 
 var config1 = require('twit/config1')
 
 var logwriter = require('./lib/logwriter')
 
 var Twit = new twit(config1);
-var username = null;
-
 var LogWriter = new logwriter('ghostLog.txt', function(exists) { });
 
 var stream = Twit.stream('statuses/filter', { track: '#ghostselfie' });
 
-// Testing webpage
+
+// twitter listning stream
+stream.on('tweet', function (tweet) {
+ 	//console.log(tweet)
+	console.log("user detected: " + tweet.user.name);
+	if(username === null){
+		username = tweet.user.name;
+	}
+	LogWriter.writeUserAndTime(tweet.user.name, tweet.user.screen_name, tweet.created_at);
+
+});
+
+
+// testing webpage
 app.get('/ghostselfie', function(req, res){
 	res.sendfile('index.html');
 	/*
@@ -50,7 +62,7 @@ io.on('connection', function(socket){
 	// sends file that is ready and clears users
 	socket.on('file ready', function(msg){
 		
-		console.log('ready file: ' + msg);
+		console.log('file ready for upload: ' + msg);
 		//upload file here
 		username = null;
 	});
@@ -65,11 +77,7 @@ http.listen(3000, function(){
 	console.log('listening on *:3000');
 });
 
-// twitter listning stream
-stream.on('tweet', function (tweet) {
-  //console.log(tweet)
-  //console.log(tweet.user.name)
-  username = tweet.user.name;
-  LogWriter.writeUserAndTime(tweet.user.name, tweet.user.screen_name, tweet.created_at);
 
-});
+
+
+

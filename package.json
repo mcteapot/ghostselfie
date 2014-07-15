@@ -2,7 +2,7 @@
   "name": "ghostselfie",
   "version": "0.0.0",
   "description": "ghostselfie",
-  "main": "index.js",
+  "main": "app.js",
   "dependencies": {
     "twit": "^1.1.15",
     "request": "^2.37.0"

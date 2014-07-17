@@ -8,7 +8,7 @@ import org.openkinect.processing.*;
 
 //OBJECTS
 PImage imgBackground;
-
+PImage imgBackground00;
 // Kinect Library object
 Kinect kinect;
 
@@ -34,6 +34,7 @@ float[] depthLookUp = new float[2048];
 void setup() {
   size(800,600,OPENGL);
   //size(800,600,P3D);
+  imgBackground00 = loadImage("background00.png");
   imgBackground = loadImage("background02.png");
   
   backgroundColor01 = color(255, 0, 255);
@@ -95,9 +96,20 @@ void draw() {
 //API FUNCITON
 
 void drawBackground() {
+  float depth = 2049;
   background(color(255, 255, 0));
   //image(imgBackground, 0, 0, width, height);
-  setGradient(0, 0, width, height, backgroundColor01, backgroundColor02, X_AXIS);
+  /*
+  translate(width / 2, height / 2);
+  beginShape();
+  texture(imgBackground00);
+  vertex(-100, -height, -depth, 0,   0);
+  vertex( 100, -height, -depth, 900, 0);
+  vertex( 100,  height, -depth, 900, 900);
+  vertex(-100,  height, -depth, 0,   900);
+  endShape();
+  */
+  //setGradient(0, 0, width, height, backgroundColor01, backgroundColor02, X_AXIS);
 }
 
 

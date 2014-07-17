@@ -1,4 +1,5 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
@@ -18,6 +19,8 @@ var LogWriter = new logwriter('ghostLog.txt', function(exists) { });
 
 var stream = Twit.stream('statuses/filter', { track: '#ghostselfie' });
 
+//app.use(express.bodyParser());
+
 
 // twitter listning stream
 stream.on('tweet', function (tweet) {
@@ -33,46 +36,22 @@ stream.on('tweet', function (tweet) {
 
 // testing webpage
 app.get('/ghostselfie', function(req, res){
-	res.sendfile('index.html');
-	/*
-	if(username !== null){
-		res.send(username);
-	} else {
-		res.send('nothing yet')
-	}
-	*/
+	//res.sendfile('index.html');
+	res.send('send stuff')
 });
 
 
-// io connections
-io.on('connection', function(socket){
-	console.log('a user connected');
-
-	// sends out if user is tweeting
-	socket.on('get user', function(msg){
-		if(username !== null){
-			msg = username;
-		} else {
-			msg = "null";
-		}
-		console.log('sending user: ' + username);
-	   io.emit('sending user', msg);
-	});
-
-	// sends file that is ready and clears users
-	socket.on('file ready', function(msg){
-		
-		console.log('file ready for upload: ' + msg);
-		//upload file here
-		username = null;
-	});
-	
-	// disconnect from server
-	socket.on('disconnect', function(){
-		console.log('user disconnected');
-	});
+app.post('/location', function(req, res) {
+    //res.send('Username: ' + req.body.username);
+    console.log(req);
+    //res.send('FUCK OFF DICK WEED ' + req);
+    //res.writeHead(200,{"content-type":"text/html;charset=UTF8;"});
+    //res.end("POST");
+    //console.log(req.prams);
+    //console.log(req.body);
 });
 
+// create web server
 http.listen(3000, function(){
 	console.log('listening on *:3000');
 });

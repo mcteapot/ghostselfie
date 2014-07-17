@@ -37,18 +37,16 @@ stream.on('tweet', function (tweet) {
 // testing webpage
 app.get('/ghostselfie', function(req, res){
 	//res.sendfile('index.html');
-	res.send('send stuff')
+	res.send('send stuff');
 });
 
 
 app.post('/location', function(req, res) {
-    //res.send('Username: ' + req.body.username);
-    console.log(req);
-    //res.send('FUCK OFF DICK WEED ' + req);
-    //res.writeHead(200,{"content-type":"text/html;charset=UTF8;"});
-    //res.end("POST");
-    //console.log(req.prams);
-    //console.log(req.body);
+    console.log('headers: ' + JSON.stringify(req.headers));
+    console.log('user-agent: ' + req.headers['user-agent']);
+    //LogWriter.writeToLog();			
+    res.send('FUCK OFF DICK WEED ' + req );
+
 });
 
 // create web server

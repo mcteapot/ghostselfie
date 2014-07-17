@@ -32,7 +32,8 @@ int h = 480;
 float[] depthLookUp = new float[2048];
 
 void setup() {
-  size(800,600,P3D);
+  size(800,600,OPENGL);
+  //size(800,600,P3D);
   imgBackground = loadImage("background02.png");
   
   backgroundColor01 = color(255, 0, 255);

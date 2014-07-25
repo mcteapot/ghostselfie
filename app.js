@@ -19,33 +19,46 @@ var LogWriter = new logwriter('ghostLog.txt', function(exists) { });
 
 var stream = Twit.stream('statuses/filter', { track: '#ghostselfie' });
 
-//app.use(express.bodyParser());
 
+// API 
 
-// twitter listning stream
+// twitter listning stream for Hash tag 
 stream.on('tweet', function (tweet) {
- 	//console.log(tweet)
-	console.log("user detected: " + tweet.user.name);
+	console.log("user detected: " + tweet.user.screen_name);
 	if(username === null){
-		username = tweet.user.name;
+		username = tweet.user.screen_name;
 	}
 	LogWriter.writeUserAndTime(tweet.user.name, tweet.user.screen_name, tweet.created_at);
 
 });
 
 
-// testing webpage
+// REST 
+
+// gets username if some one tweetet
 app.get('/ghostselfie', function(req, res){
 	//res.sendfile('index.html');
-	res.send('send stuff');
+	if(username === null){
+		res.send(username);
+	} else {
+		res.send("null");
+	}
+
 });
 
+// posts image of selife sent in user-agent
+app.post('/ghostselfie', function(req, res) {
+    console.log('user-agent File: ' + req.headers['user-agent']);
+    var gifUploadFile = req.headers['user-agent'];
+    Twit.postMediaRequestFilePath(request, '@' + username, gifUploadFile, function(err, data, response) {
+  		if (err) {
+    		console.log(err);
+  		}
+  		username = null;
+  		console.log(response);
+	});		
+    
 
-app.post('/location', function(req, res) {
-    console.log('headers: ' + JSON.stringify(req.headers));
-    console.log('user-agent: ' + req.headers['user-agent']);
-    //LogWriter.writeToLog();			
-    res.send('FUCK OFF DICK WEED ' + req );
 
 });
 

@@ -9,7 +9,7 @@ PImage imgBackground00;
 // Kinect Library object
 Kinect kinect;
 GifMaker gifExport;
-Timer timer;
+Timer timerGif;
 
 // Constants
 int Y_AXIS = 1;
@@ -20,7 +20,7 @@ color backgroundColor01, backgroundColor02, pointColor;
 float rotateAngle = 0;
 float animateDepth = 0;
 boolean switchDepth = false;
-boolean captureGif = false;
+String tweetUser = "";
 
 // Size of kinect image
 int w = 640;
@@ -40,12 +40,10 @@ void setup() {
   imgBackground = loadImage("background02.png");
   
   // setup gif
-  gifExport = new GifMaker(this, "../../img/export.gif");
-  gifExport.setRepeat(0);             // make it an "endless" animation
-  
-  // timer set
-  timer = new Timer(5000); //5000ms = .5s
-  timer.start();
+
+  // timers set
+  timerGif = new Timer(5000); //5000ms = .5s
+
   
   // variables set 
   backgroundColor01 = color(255, 0, 255);
@@ -58,14 +56,20 @@ void setup() {
 }
 
 void draw() {
-    gifExport.setDelay(1);
-    gifExport.addFrame();
-  if (timer.isFinished()) {
-    println("TIMER FINISHED");
-     gifExport.finish();
-    //timer.start();
+  
+  // captures gif when timer is active
+  if(timerGif.isActive()) {
+    gifCapture();
+    if(timerGif.isFinished()) {
+      println("TIMER FINISHED");
+      timerGif.stop();
+      gifSave();
+      //timer.start();
+    }
   }
   
+  
+  // Background and other stuff
   drawBackground();
   fill(255);
   textMode(SHAPE);
@@ -81,7 +85,7 @@ void draw() {
   translate(width/2,height/2,-50);
   rotateY(rotateAngle);
 
-
+  // Draws point clouds
   for(int x=0; x<w; x+=skip) {
     for(int y=0; y<h; y+=skip) {
       int offset = x+y*w;
@@ -104,7 +108,7 @@ void draw() {
     }
   }
 
-  // Rotate
+  // Increent Rotates points
   rotateAngle += 0.015f;
   //animateDepth += 1.0f;
   //println(animateDepth);
@@ -193,8 +197,20 @@ void setGradient(int x, int y, float w, float h, color c1, color c2, int axis ) 
   }
 }
 
+void gifCapture() {
+    gifExport.setDelay(1);
+    gifExport.addFrame();
+}
+
+void gifSave() {
+    gifExport.finish();
+}
+
+
 void mousePressed() {
-    captureGif = true;
+    gifExport = new GifMaker(this, "../../img/" + "export" + ".gif");
+    gifExport.setRepeat(0);             // make it an "endless" animation
+    timerGif.start();
 }
 
 void stop() {

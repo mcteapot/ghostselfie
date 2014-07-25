@@ -10,6 +10,7 @@ PImage imgBackground00;
 Kinect kinect;
 GifMaker gifExport;
 Timer timerGif;
+HTTPClient httpClient;
 
 // Constants
 int Y_AXIS = 1;
@@ -20,7 +21,8 @@ color backgroundColor01, backgroundColor02, pointColor;
 float rotateAngle = 0;
 float animateDepth = 0;
 boolean switchDepth = false;
-String tweetUser = "";
+String url = "http://localhost:3000/ghostselfie";
+String tweetUser = "null";
 
 // Size of kinect image
 int w = 640;
@@ -43,7 +45,9 @@ void setup() {
 
   // timers set
   timerGif = new Timer(5000); //5000ms = .5s
-
+  
+  // setup HTTP Client
+  httpClient = new HTTPClient(url);
   
   // variables set 
   backgroundColor01 = color(255, 0, 255);
@@ -56,18 +60,24 @@ void setup() {
 }
 
 void draw() {
-  
+  println("WORKING");
   // captures gif when timer is active
   if(timerGif.isActive()) {
     gifCapture();
     if(timerGif.isFinished()) {
-      println("TIMER FINISHED");
       timerGif.stop();
       gifSave();
-      //timer.start();
+      println("TIMER FINISHED");
+    }
+  } else {
+    // checks if user is regestred
+    tweetUser = httpClient.GETPage(url);
+    if(!(tweetUser.equals("null"))) {
+      println("USERNAME: " + tweetUser);
+      gifStart();
     }
   }
-  
+  //tweetUser = httpClient.GETPage(url);
   
   // Background and other stuff
   drawBackground();
@@ -204,11 +214,15 @@ void gifCapture() {
 
 void gifSave() {
     gifExport.finish();
+    ArrayList nameValueHeader = new ArrayList();
+    nameValueHeader.add(new BasicNameValuePair("User-Agent", tweetUser + ".gif"));
+    httpClient.POSTPageHeader(url, nameValueHeader);
+    tweetUser = "null";
 }
 
 
-void mousePressed() {
-    gifExport = new GifMaker(this, "../../img/" + "export" + ".gif");
+void gifStart() {
+    gifExport = new GifMaker(this, "../../img/" + tweetUser + ".gif");
     gifExport.setRepeat(0);             // make it an "endless" animation
     timerGif.start();
 }

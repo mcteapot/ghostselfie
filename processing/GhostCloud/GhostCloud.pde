@@ -1,7 +1,4 @@
-// Daniel Shiffman
-// Kinect Point Cloud example
-// http://www.shiffman.net
-// https://github.com/shiffman/libfreenect/tree/master/wrappers/java/processing
+import gifAnimation.*;
 
 import org.openkinect.*;
 import org.openkinect.processing.*;
@@ -11,6 +8,8 @@ PImage imgBackground;
 PImage imgBackground00;
 // Kinect Library object
 Kinect kinect;
+GifMaker gifExport;
+Timer timer;
 
 // Constants
 int Y_AXIS = 1;
@@ -21,6 +20,8 @@ color backgroundColor01, backgroundColor02, pointColor;
 float rotateAngle = 0;
 float animateDepth = 0;
 boolean switchDepth = false;
+boolean captureGif = false;
+
 // Size of kinect image
 int w = 640;
 int h = 480;
@@ -33,19 +34,38 @@ float[] depthLookUp = new float[2048];
 
 void setup() {
   size(800,600,OPENGL);
-  //size(800,600,P3D);
+   frameRate(12);
+  // images loaded
   imgBackground00 = loadImage("background00.png");
   imgBackground = loadImage("background02.png");
   
+  // setup gif
+  gifExport = new GifMaker(this, "../../img/export.gif");
+  gifExport.setRepeat(0);             // make it an "endless" animation
+  
+  // timer set
+  timer = new Timer(5000); //5000ms = .5s
+  timer.start();
+  
+  // variables set 
   backgroundColor01 = color(255, 0, 255);
   backgroundColor02 = color(0, 255, 255);
   pointColor = color(255, 0, 0);
+  
+  //other 
   setupKinect();
   //drawBackground();
 }
 
 void draw() {
-
+    gifExport.setDelay(1);
+    gifExport.addFrame();
+  if (timer.isFinished()) {
+    println("TIMER FINISHED");
+     gifExport.finish();
+    //timer.start();
+  }
+  
   drawBackground();
   fill(255);
   textMode(SHAPE);
@@ -86,8 +106,8 @@ void draw() {
 
   // Rotate
   rotateAngle += 0.015f;
-  animateDepth += 1.0f;
-  println(animateDepth);
+  //animateDepth += 1.0f;
+  //println(animateDepth);
   
   
 }
@@ -173,6 +193,9 @@ void setGradient(int x, int y, float w, float h, color c1, color c2, int axis ) 
   }
 }
 
+void mousePressed() {
+    captureGif = true;
+}
 
 void stop() {
   kinect.quit();

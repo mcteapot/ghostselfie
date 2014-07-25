@@ -4,8 +4,9 @@ import org.openkinect.*;
 import org.openkinect.processing.*;
 
 //OBJECTS
-PImage imgBackground;
+PImage imgFrame00;
 PImage imgBackground00;
+PImage imgPoint00;
 // Kinect Library object
 Kinect kinect;
 GifMaker gifExport;
@@ -38,8 +39,9 @@ void setup() {
   size(800,600,OPENGL);
    frameRate(12);
   // images loaded
+  imgFrame00 = loadImage("ghostframe00.png");
   imgBackground00 = loadImage("background00.png");
-  imgBackground = loadImage("background02.png");
+  imgPoint00 = loadImage("pointcloud01.png");
   
   // setup gif
 
@@ -60,24 +62,8 @@ void setup() {
 }
 
 void draw() {
-  println("WORKING");
-  // captures gif when timer is active
-  if(timerGif.isActive()) {
-    gifCapture();
-    if(timerGif.isFinished()) {
-      timerGif.stop();
-      gifSave();
-      println("TIMER FINISHED");
-    }
-  } else {
-    // checks if user is regestred
-    tweetUser = httpClient.GETPage(url);
-    if(!(tweetUser.equals("null"))) {
-      println("USERNAME: " + tweetUser);
-      gifStart();
-    }
-  }
-  //tweetUser = httpClient.GETPage(url);
+
+  //listenForTweets();
   
   // Background and other stuff
   drawBackground();
@@ -94,6 +80,8 @@ void draw() {
   // Translate and rotate
   translate(width/2,height/2,-50);
   rotateY(rotateAngle);
+  //rotateX(PI/3);
+  //rotateZ(PI/6);
 
   // Draws point clouds
   for(int x=0; x<w; x+=skip) {
@@ -105,7 +93,7 @@ void draw() {
       PVector v = depthToWorld(x,y,rawDepth);
 
       //stroke(pointColor);
-      stroke(imgBackground.get(x,y));
+      stroke(imgPoint00.get(x,y));
       pushMatrix();
       // Scale up by 200
       float factor = 600;
@@ -123,26 +111,29 @@ void draw() {
   //animateDepth += 1.0f;
   //println(animateDepth);
   
-  
+
 }
 
 
 //API FUNCITON
 
 void drawBackground() {
-  float depth = 2049;
+  float backgroundDepth = -2049;
+  float backgroundSize = 2500;
+  float frameDepth = 100;
+  float frameSize = 400;
   background(color(255, 255, 0));
   //image(imgBackground, 0, 0, width, height);
-  /*
-  translate(width / 2, height / 2);
+  
+  //translate(width / 2, height / 2);
   beginShape();
   texture(imgBackground00);
-  vertex(-100, -height, -depth, 0,   0);
-  vertex( 100, -height, -depth, 900, 0);
-  vertex( 100,  height, -depth, 900, 900);
-  vertex(-100,  height, -depth, 0,   900);
+  vertex(-backgroundSize, -backgroundSize, backgroundDepth, 0, 0);
+  vertex(backgroundSize, -backgroundSize, backgroundDepth, imgBackground00.width, 0);
+  vertex(backgroundSize, backgroundSize, backgroundDepth, imgBackground00.width, imgBackground00.height);
+  vertex(-backgroundSize, backgroundSize, backgroundDepth, 0, imgBackground00.height);
   endShape();
-  */
+  
   //setGradient(0, 0, width, height, backgroundColor01, backgroundColor02, X_AXIS);
 }
 
@@ -226,6 +217,35 @@ void gifStart() {
     gifExport.setRepeat(0);             // make it an "endless" animation
     timerGif.start();
 }
+
+void listenForTweets() {
+  // captures gif when timer is active
+  if(timerGif.isActive()) {
+    gifCapture();
+    if(timerGif.isFinished()) {
+      timerGif.stop();
+      gifSave();
+      println("TIMER FINISHED");
+    }
+  } else {
+    // checks if user is regestred
+    tweetUser = httpClient.GETPage(url);
+    if(!(tweetUser.equals("null"))) {
+      println("USERNAME: " + tweetUser);
+      gifStart();
+    }
+  }
+}
+void keyPressed() {
+  if (key == CODED) {
+    if (keyCode == UP) {
+      animateDepth = animateDepth + 10;
+    } else if (keyCode == DOWN) {
+      animateDepth = animateDepth - 10;
+    }
+  } 
+}
+
 
 void stop() {
   kinect.quit();

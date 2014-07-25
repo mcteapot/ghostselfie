@@ -78,7 +78,7 @@ void draw() {
       translate(v.x*factor,v.y*factor,factor-v.z*factor);
       // Draw a point
       strokeWeight(2);  // Beastly
-      line(0, 0, animateDepth, animateDepth);
+      line(0, 0, 10, 10);
       //point(0,0);
       popMatrix();
     }

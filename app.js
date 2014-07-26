@@ -25,7 +25,10 @@ var stream = Twit.stream('statuses/filter', { track: '#ghostselfie' });
 // twitter listning stream for Hash tag 
 stream.on('tweet', function (tweet) {
 	console.log("user detected: " + tweet.user.screen_name);
-	username = tweet.user.screen_name;
+	if(username === "null") {
+		console.log("changed");
+		username = tweet.user.screen_name;
+	}
 	LogWriter.writeUserAndTime(tweet.user.name, tweet.user.screen_name, tweet.created_at);
 
 });

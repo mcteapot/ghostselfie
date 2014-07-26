@@ -4,13 +4,20 @@ import org.openkinect.*;
 import org.openkinect.processing.*;
 
 //OBJECTS
+PImage imgHashTag00;
 PImage imgFrame00;
 PImage imgBackground00;
 PImage imgPoint00;
+
+PImage imgActiveBack;
+PImage imgActivePoint;
+
 // Kinect Library object
 Kinect kinect;
 GifMaker gifExport;
 Timer timerGif;
+Timer timerBlink;
+Timer timerSwitch;
 HTTPClient httpClient;
 
 // Constants
@@ -38,7 +45,8 @@ float[] depthLookUp = new float[2048];
 void setup() {
   size(800,600,OPENGL);
    frameRate(12);
-  // images loaded
+  // images loaded]
+  imgHashTag00 = loadImage("hashtag.png");
   imgFrame00 = loadImage("ghostframe00.png");
   imgBackground00 = loadImage("background00.png");
   imgPoint00 = loadImage("pointcloud01.png");
@@ -47,6 +55,8 @@ void setup() {
 
   // timers set
   timerGif = new Timer(5000); //5000ms = .5s
+  timerBlink = new Timer(50);
+  timerSwitch = new Timer(10000);
   
   // setup HTTP Client
   httpClient = new HTTPClient(url);
@@ -64,6 +74,7 @@ void setup() {
 void draw() {
 
   //listenForTweets();
+  blinkTimer();
   
   // Background and other stuff
   drawBackground();
@@ -120,8 +131,12 @@ void draw() {
 void drawBackground() {
   float backgroundDepth = -2049;
   float backgroundSize = 2500;
-  float frameDepth = 100;
+  float frameDepth = -2049;
   float frameSize = 400;
+  
+  float frame00 = -1380;
+  float frame01 = 2700;
+  
   background(color(255, 255, 0));
   //image(imgBackground, 0, 0, width, height);
   
@@ -133,6 +148,19 @@ void drawBackground() {
   vertex(backgroundSize, backgroundSize, backgroundDepth, imgBackground00.width, imgBackground00.height);
   vertex(-backgroundSize, backgroundSize, backgroundDepth, 0, imgBackground00.height);
   endShape();
+  
+    //translate(width / 2, height / 2);
+  if(!(timerBlink.isActive()) ) {
+     beginShape();
+     texture(imgHashTag00);
+    //println("minus" + (-frame00 + animateDepth));
+    //println("plus " + (frame01 + animateDepth));
+    vertex(frame00, frame00 + animateDepth, frameDepth, 0, 0);
+    vertex(frame01, frame00, frameDepth, imgFrame00.width, 0);
+    vertex(frame01, frame01, frameDepth, imgFrame00.width, imgFrame00.height);
+    vertex(frame00, frame01, frameDepth, 0, imgFrame00.height);
+    endShape();
+   }
   
   //setGradient(0, 0, width, height, backgroundColor01, backgroundColor02, X_AXIS);
 }
@@ -236,6 +264,34 @@ void listenForTweets() {
     }
   }
 }
+
+
+void blinkTimer() {
+  if(timerBlink.isActive()) {
+    if(timerBlink.isFinished()) {
+      timerBlink.stop();
+    }
+  } else {
+    timerBlink.start();
+  }
+}
+
+void switchTimer() {
+  if(timerSwitch.isActive()) {
+    if(timerSwitch.isFinished()) {
+      timerSwitch.stop();
+    }
+  } else {
+    timerSwitch.start();
+  }
+  
+}
+
+void switchImages() {
+
+}
+
+
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == UP) {

@@ -5,12 +5,26 @@ import org.openkinect.processing.*;
 
 //OBJECTS
 PImage imgHashTag00;
+PImage imgHashTag01;
+PImage imgHashTag02;
+PImage imgHashTag03;
+
 PImage imgFrame00;
+
 PImage imgBackground00;
+PImage imgBackground01;
+PImage imgBackground02;
+PImage imgBackground03;
+
 PImage imgPoint00;
+PImage imgPoint01;
+PImage imgPoint02;
+PImage imgPoint03;
+PImage imgPoint04;
 
 PImage imgActiveBack;
 PImage imgActivePoint;
+PImage imgActiveHash;
 
 // Kinect Library object
 Kinect kinect;
@@ -46,15 +60,28 @@ void setup() {
   size(800,600,OPENGL);
    frameRate(12);
   // images loaded]
-  imgHashTag00 = loadImage("hashtag.png");
+  imgHashTag00 = loadImage("hashtag00.png");
+  imgHashTag01 = loadImage("hashtag01.png");
+  imgHashTag02 = loadImage("hashtag02.png");
+  imgHashTag03 = loadImage("hashtag03.png");
+  
   imgFrame00 = loadImage("ghostframe00.png");
+  
   imgBackground00 = loadImage("background00.png");
-  imgPoint00 = loadImage("pointcloud01.png");
+  imgBackground01 = loadImage("background01.png");
+  imgBackground02 = loadImage("background02.png");
+  imgBackground03 = loadImage("background03.png");
+  
+  imgPoint00 = loadImage("pointcloud00.png");
+  imgPoint01 = loadImage("pointcloud01.png");
+  imgPoint02 = loadImage("pointcloud02.png");
+  imgPoint03 = loadImage("pointcloud03.png");
+  imgPoint04 = loadImage("pointcloud04.png");
   
   // setup gif
 
   // timers set
-  timerGif = new Timer(5000); //5000ms = .5s
+  timerGif = new Timer(6000); //5000ms = .5s
   timerBlink = new Timer(50);
   timerSwitch = new Timer(10000);
   
@@ -68,13 +95,15 @@ void setup() {
   
   //other 
   setupKinect();
-  //drawBackground();
+  switchImages();
+
 }
 
 void draw() {
 
-  //listenForTweets();
+  listenForTweets();
   blinkTimer();
+  switchTimer();
   
   // Background and other stuff
   drawBackground();
@@ -104,7 +133,7 @@ void draw() {
       PVector v = depthToWorld(x,y,rawDepth);
 
       //stroke(pointColor);
-      stroke(imgPoint00.get(x,y));
+      stroke(imgActivePoint.get(x,y));
       pushMatrix();
       // Scale up by 200
       float factor = 600;
@@ -134,15 +163,15 @@ void drawBackground() {
   float frameDepth = -2049;
   float frameSize = 400;
   
-  float frame00 = -1380;
-  float frame01 = 2700;
+  float frame00 = -1580;
+  float frame01 = 2500;
   
   background(color(255, 255, 0));
   //image(imgBackground, 0, 0, width, height);
   
   //translate(width / 2, height / 2);
   beginShape();
-  texture(imgBackground00);
+  texture(imgActiveBack);
   vertex(-backgroundSize, -backgroundSize, backgroundDepth, 0, 0);
   vertex(backgroundSize, -backgroundSize, backgroundDepth, imgBackground00.width, 0);
   vertex(backgroundSize, backgroundSize, backgroundDepth, imgBackground00.width, imgBackground00.height);
@@ -152,13 +181,13 @@ void drawBackground() {
     //translate(width / 2, height / 2);
   if(!(timerBlink.isActive()) ) {
      beginShape();
-     texture(imgHashTag00);
+     texture(imgActiveHash);
     //println("minus" + (-frame00 + animateDepth));
     //println("plus " + (frame01 + animateDepth));
     vertex(frame00, frame00 + animateDepth, frameDepth, 0, 0);
-    vertex(frame01, frame00, frameDepth, imgFrame00.width, 0);
-    vertex(frame01, frame01, frameDepth, imgFrame00.width, imgFrame00.height);
-    vertex(frame00, frame01, frameDepth, 0, imgFrame00.height);
+    vertex(frame01, frame00, frameDepth, imgActiveHash.width, 0);
+    vertex(frame01, frame01, frameDepth, imgActiveHash.width, imgActiveHash.height);
+    vertex(frame00, frame01, frameDepth, 0, imgActiveHash.height);
     endShape();
    }
   
@@ -279,6 +308,7 @@ void blinkTimer() {
 void switchTimer() {
   if(timerSwitch.isActive()) {
     if(timerSwitch.isFinished()) {
+      switchImages();
       timerSwitch.stop();
     }
   } else {
@@ -288,6 +318,67 @@ void switchTimer() {
 }
 
 void switchImages() {
+  
+  int swithBackground = (int) random(4);
+  int swithPoint = (int) random(5);
+  int swithHash = (int) random(4);
+  
+  switch(swithBackground) {
+    case 0:
+      imgActiveBack = imgBackground00;
+      break;
+    case 1:
+       imgActiveBack = imgBackground01; 
+      break;
+    case 2: 
+      imgActiveBack = imgBackground02;
+      break;
+    case 3: 
+      imgActiveBack = imgBackground03;
+      break;
+    default: 
+      imgActiveBack = imgBackground00;
+      break;
+  }
+  
+  switch(swithPoint) {
+    case 0:
+      imgActivePoint = imgPoint00;
+      break;
+    case 1:
+      imgActivePoint = imgPoint01; 
+      break;
+    case 2: 
+      imgActivePoint = imgPoint02;
+      break;
+    case 3: 
+      imgActivePoint = imgPoint03;
+      break;
+    case 4: 
+      imgActivePoint = imgPoint04;
+      break;
+    default: 
+      imgActivePoint = imgPoint00;
+      break;
+  }
+  
+  switch(swithHash) {
+    case 0:
+      imgActiveHash = imgHashTag00;
+      break;
+    case 1:
+       imgActiveHash = imgHashTag01; 
+      break;
+    case 2: 
+      imgActiveHash = imgHashTag02;
+      break;
+    case 3: 
+      imgActiveHash = imgHashTag03;
+      break;
+    default: 
+      imgActiveHash = imgHashTag00;
+      break;
+  }
 
 }
 

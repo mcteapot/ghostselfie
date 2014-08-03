@@ -9,6 +9,9 @@ var fs = require('fs')
 	, request = require('request');
 
 var username = "null";
+var tweetIdStr = "";
+
+var currentdate = new Date();
 
 var config1 = require('twit/config1')
 
@@ -17,7 +20,7 @@ var logwriter = require('./lib/logwriter')
 var Twit = new twit(config1);
 var LogWriter = new logwriter('ghostLog.txt', function(exists) { });
 
-var stream = Twit.stream('statuses/filter', { track: '#ghostselfie' });
+var stream = Twit.stream('statuses/filter', { track: '#glitchcity' });
 
 
 // API 
@@ -28,6 +31,7 @@ stream.on('tweet', function (tweet) {
 	if(username === "null") {
 		console.log("changed");
 		username = tweet.user.screen_name;
+		tweetIdStr = tweet.id_str;
 	}
 	LogWriter.writeUserAndTime(tweet.user.name, tweet.user.screen_name, tweet.created_at);
 
@@ -47,10 +51,16 @@ app.post('/ghostselfie', function(req, res) {
 	var self = this;
 	var tweetUser = username;
 	username = "null";
+	var datetime = currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + "  "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
     console.log('user-agent File: ' + req.headers['user-agent']);
     var gifUploadFile = req.headers['user-agent'];
     res.send("post compleate");
-    Twit.postMediaRequestFilePath(request, '@' + tweetUser, "./img/" + gifUploadFile, function(err, data, response) {
+    Twit.postReplyMediaRequestFilePath(request, tweetIdStr, '@' + tweetUser + " " + datetime, "./img/" + gifUploadFile, function(err, data, response) {
   		if (err) {
     		console.log(err);
   		}

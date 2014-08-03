@@ -60,6 +60,9 @@ void setup() {
   size(800,600,OPENGL);
    frameRate(12);
   // images loaded]
+  
+  frame.setTitle("TWITTER: @ghostselfie"); 
+  
   imgHashTag00 = loadImage("hashtag00.png");
   imgHashTag01 = loadImage("hashtag01.png");
   imgHashTag02 = loadImage("hashtag02.png");
@@ -81,7 +84,7 @@ void setup() {
   // setup gif
 
   // timers set
-  timerGif = new Timer(6000); //5000ms = .5s
+  timerGif = new Timer(5000); //5000ms = .5s
   timerBlink = new Timer(50);
   timerSwitch = new Timer(10000);
   
